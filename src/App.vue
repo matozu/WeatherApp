@@ -2,7 +2,7 @@
   <div class="container">
     <h1>Weather App</h1>
     <input type="text" v-model="place" />
-    <button @click="addPlace">add</button>
+    <button class="add-btn" @click="addPlace">Add place</button>
     <place-card v-for="place in getPlaces" :placeWeather="place"> </place-card>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
     },
   },
   created() {
-    this.fetchWeatherInfo("pula");
+    this.fetchWeatherInfo("Šibenik");
   },
 };
 </script>
@@ -43,7 +43,11 @@ export default {
 .container {
   width: 50%;
   margin: auto;
-  border: 1px solid gray;
+  // border: 1px solid gray;
   text-align: center;
+}
+
+.add-btn {
+  margin-left: 10px;
 }
 </style>

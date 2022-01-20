@@ -74,13 +74,16 @@ export default {
     calcTemp: (tempK) => {
       return Math.round(Number(tempK) - 273.15);
     },
+
     // m/s => km/h
     calcWindSpeed(ms_speed) {
       return Math.round(ms_speed * 3.6 * 10) / 10;
     },
+
     getIconUrl(icon) {
-      return "http://openweathermap.org/img/w/" + icon + ".png";
+      return `http://openweathermap.org/img/w/${icon}.png`;
     },
+
     windDirectionCalc(deg) {
       var val = Math.floor(deg / 22.5 + 0.5);
       var arr = [
@@ -103,9 +106,14 @@ export default {
       ];
       return arr[val % 16];
     },
+
     toggleShowForecast() {
+      if (this.placeForecast.length == 0) {
+        this.fetchPlaceForecast();
+      }
       this.showForecast = !this.showForecast;
     },
+
     async fetchPlaceForecast() {
       const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -118,9 +126,6 @@ export default {
         this.placeForecast.push(data.list[i]);
       }
     },
-  },
-  created() {
-    this.fetchPlaceForecast();
   },
 };
 </script>

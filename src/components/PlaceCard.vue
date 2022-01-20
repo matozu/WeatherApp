@@ -4,21 +4,22 @@
       {{ placeWeather.name }}, {{ placeWeather.weather[0].description }}
     </div>
     <div class="header-right">
-      <img :src="iconUrl" alt="" />
+      <img :src="getIconUrl(placeWeather.weather[0].icon)" alt="" />
     </div>
 
     <div style="clear: both"></div>
 
     <div class="weather-main">
-      <div class="main-temp">{{ temp }}°</div>
+      <div class="main-temp">{{ calcTemp(placeWeather.main.temp) }}°</div>
       <div class="main-right">
-        Feels Like: {{ feelsLike }} °C
+        Feels Like: {{ calcTemp(placeWeather.main.feels_like) }} °C
         <br />
         Pressure:{{ placeWeather.main.pressure }} hPa
         <br />
         Humidity: {{ placeWeather.main.humidity }} %
         <br />
-        Wind: {{ windSpeed }} km/h, {{ windDirection }}
+        Wind: {{ calcWindSpeed(placeWeather.wind.speed) }} km/h,
+        {{ windDirectionCalc(placeWeather.wind.deg) }}
       </div>
       <!-- <div style="clear: both"></div> -->
     </div>
@@ -52,7 +53,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import fetchData from "../adapter";
+
 export default {
   name: "PlaceCard",
   props: {
@@ -63,35 +65,21 @@ export default {
   },
   data() {
     return {
-      iconUrl:
-        "http://openweathermap.org/img/w/" +
-        this.placeWeather.weather[0].icon +
-        ".png",
-      temp: Math.round(this.placeWeather.main.temp - 273.15),
-      feelsLike: Math.round(this.placeWeather.main.feels_like - 273.15),
-      windSpeed: Math.round(this.placeWeather.wind.speed * 3.6 * 10) / 10,
-      windDirection: this.windDirectionCalc(this.placeWeather.wind.deg),
       placeForecast: [],
       showForecast: false,
     };
   },
   methods: {
+    // k=>°c
     calcTemp: (tempK) => {
       return Math.round(Number(tempK) - 273.15);
     },
-    async fetchPlaceForecast() {
-      const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-      const result = await axios.get(
-        `http://api.openweathermap.org/data/2.5/forecast?q=${this.placeWeather.name}&appid=524464013431281f7aabe3e488765d52`
-      );
-      const data = await result.data;
-      for (let i = 7; i <= data.list.length; i += 8) {
-        let dt = new Date(data.list[i].dt_txt);
-        data.list[i].day = weekday[dt.getDay()];
-
-        this.placeForecast.push(data.list[i]);
-      }
+    // m/s => km/h
+    calcWindSpeed(ms_speed) {
+      return Math.round(ms_speed * 3.6 * 10) / 10;
+    },
+    getIconUrl(icon) {
+      return "http://openweathermap.org/img/w/" + icon + ".png";
     },
     windDirectionCalc(deg) {
       var val = Math.floor(deg / 22.5 + 0.5);
@@ -117,6 +105,18 @@ export default {
     },
     toggleShowForecast() {
       this.showForecast = !this.showForecast;
+    },
+    async fetchPlaceForecast() {
+      const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+      const data = await fetchData(this.placeWeather.name, "forecast");
+
+      for (let i = 7; i <= data.list.length; i += 8) {
+        let dt = new Date(data.list[i].dt_txt);
+        data.list[i].day = weekday[dt.getDay()];
+
+        this.placeForecast.push(data.list[i]);
+      }
     },
   },
   created() {

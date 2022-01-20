@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
-import axios from "axios";
-import { VueElement } from "vue";
+import fetchData from "../adapter";
 
 export default createStore({
     state: {
@@ -13,8 +12,7 @@ export default createStore({
     },
     actions: {
         async fetchWeatherInfo({ commit }, place) {
-            const result = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${place}&appid=524464013431281f7aabe3e488765d52`)
-            const data = await result.data
+            const data = await fetchData(place, 'weather')
             commit('addPlace', data)
         }
         

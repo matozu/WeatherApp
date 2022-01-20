@@ -1,5 +1,7 @@
 <template>
   <div class="card">
+    <div class="circle" @click="deletePlace(placeWeather.id)">X</div>
+
     <div class="header-left">
       {{ placeWeather.name }}, {{ placeWeather.weather[0].description }}
     </div>
@@ -54,6 +56,7 @@
 
 <script>
 import fetchData from "../adapter";
+import { mapMutations } from "vuex";
 
 export default {
   name: "PlaceCard",
@@ -70,6 +73,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["deletePlace"]),
     // k=>°c
     calcTemp: (tempK) => {
       return Math.round(Number(tempK) - 273.15);
@@ -132,13 +136,14 @@ export default {
 
 <style lang="scss" scoped>
 .card {
+  position: relative;
   width: 300px;
-  // border: 1px solid gray;
+  border: 1px solid gray;
   border-radius: 5px;
   margin: 30px auto;
   padding: 10px;
   background: gainsboro;
-  overflow: auto;
+  // overflow: auto;
 }
 
 .header-left {
@@ -219,5 +224,19 @@ export default {
     width: 100%;
     margin-top: 10px;
   }
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: hotpink;
+  width: 25px;
+  height: 25px;
+  border-radius: 100%;
+  cursor: pointer;
 }
 </style>

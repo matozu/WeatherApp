@@ -23,7 +23,6 @@
         Wind: {{ calcWindSpeed(placeWeather.wind.speed) }} km/h,
         {{ windDirectionCalc(placeWeather.wind.deg) }}
       </div>
-      <!-- <div style="clear: both"></div> -->
     </div>
 
     <div class="show-forecast-btn" @click="toggleShowForecast">
@@ -143,7 +142,6 @@ export default {
   margin: 30px auto;
   padding: 10px;
   background: gainsboro;
-  // overflow: auto;
 }
 
 .header-left {

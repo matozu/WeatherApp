@@ -12,22 +12,25 @@ export default createStore({
     },
     actions: {
         async fetchWeatherInfo({ commit }, place) {
-            const data = await fetchData(place, 'weather')
-            commit('addPlace', data)
+                const data = await fetchData(place, 'weather')
+                if(typeof(data) !== 'undefined') {
+                    commit('addPlace', data)
+                } else {
+                    throw 'no place found with given name'
+                }
         }
-        
     }, 
     mutations: {
         addPlace(state, placeWeather) {
             if((state.places.filter( p => p.id == placeWeather.id)).length == 0) {
                 state.places.push(placeWeather)
             } else {
-                console.log("place already exixts")
+                throw("place already exixts")
+                // console.log("place already exixts")
             }
-
         },
         deletePlace(state, id) {
-            state.places = state.places.filter( p => p.id !=id )
+            state.places = state.places.filter( p => p.id != id )
         }
     }
 })

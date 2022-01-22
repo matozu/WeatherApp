@@ -1,6 +1,6 @@
 <template>
   <div class="card">
-    <div class="circle" @click="deletePlace(placeWeather.id)">X</div>
+    <div class="circle" @click="deletePlace(placeWeather.id)"></div>
 
     <div class="header-left">
       {{ placeWeather.name }}, {{ placeWeather.weather[0].description }}
@@ -21,7 +21,7 @@
         Humidity: {{ placeWeather.main.humidity }} %
         <br />
         Wind: {{ calcWindSpeed(placeWeather.wind.speed) }} km/h,
-        {{ windDirectionCalc(placeWeather.wind.deg) }}
+        {{ calcWindDirection(placeWeather.wind.deg) }}
       </div>
     </div>
 
@@ -32,30 +32,20 @@
     </div>
     <div style="clear: both"></div>
 
-    <div class="forecast" v-show="showForecast">
-      5 day forecast
-      <table>
-        <tr>
-          <th v-for="day in placeForecast" key="day.dt">{{ day.day }}</th>
-        </tr>
-        <tr>
-          <td v-for="day in placeForecast" key="day.dt">
-            {{ calcTemp(day.main.temp) }}
-          </td>
-        </tr>
-        <tr>
-          <td v-for="day in placeForecast" key="day.dt">
-            {{ day.weather[0].main }}
-          </td>
-        </tr>
-      </table>
-    </div>
+    <forecast v-show="showForecast" :placeForecast="placeWeather.forecast" />
   </div>
 </template>
 
 <script>
+import Forecast from "./Forecast.vue";
 import fetchData from "../adapter";
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
+import {
+  calcTemp,
+  calcWindSpeed,
+  getIconUrl,
+  calcWindDirection,
+} from "../tools";
 
 export default {
   name: "PlaceCard",
@@ -65,69 +55,26 @@ export default {
       default: { type: "" },
     },
   },
+  components: {
+    Forecast,
+  },
   data() {
     return {
-      placeForecast: [],
       showForecast: false,
     };
   },
   methods: {
     ...mapMutations(["deletePlace"]),
-    // k=>°c
-    calcTemp: (tempK) => {
-      return Math.round(Number(tempK) - 273.15);
-    },
-
-    // m/s => km/h
-    calcWindSpeed(ms_speed) {
-      return Math.round(ms_speed * 3.6 * 10) / 10;
-    },
-
-    getIconUrl(icon) {
-      return `http://openweathermap.org/img/w/${icon}.png`;
-    },
-
-    windDirectionCalc(deg) {
-      var val = Math.floor(deg / 22.5 + 0.5);
-      var arr = [
-        "N",
-        "NNE",
-        "NE",
-        "ENE",
-        "E",
-        "ESE",
-        "SE",
-        "SSE",
-        "S",
-        "SSW",
-        "SW",
-        "WSW",
-        "W",
-        "WNW",
-        "NW",
-        "NNW",
-      ];
-      return arr[val % 16];
-    },
-
+    ...mapActions(["fetchForecast"]),
+    calcTemp,
+    calcWindSpeed,
+    getIconUrl,
+    calcWindDirection,
     toggleShowForecast() {
-      if (this.placeForecast.length == 0) {
-        this.fetchPlaceForecast();
+      if (!this.placeWeather.forecast) {
+        this.fetchForecast(this.placeWeather.name).catch((e) => console.log(e));
       }
       this.showForecast = !this.showForecast;
-    },
-
-    async fetchPlaceForecast() {
-      const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-      const data = await fetchData(this.placeWeather.name, "forecast");
-
-      for (let i = 7; i <= data.list.length; i += 8) {
-        let dt = new Date(data.list[i].dt_txt);
-        data.list[i].day = weekday[dt.getDay()];
-
-        this.placeForecast.push(data.list[i]);
-      }
     },
   },
 };
@@ -174,10 +121,12 @@ export default {
 }
 
 .show-forecast-btn {
-  padding: 10px;
+  padding: 5px;
   border: none;
   cursor: pointer;
   float: right;
+  height: 10px;
+  // border: 1px solid black;
 }
 
 .forecast-icon {
@@ -191,7 +140,8 @@ export default {
   // transition: border-width 200ms ease-in-out;
 }
 
-.forecast-icon:hover {
+// .forecast-icon:hover {
+.show-forecast-btn:hover .forecast-icon {
   border-bottom-width: 2px;
   border-right-width: 2px;
 }
@@ -207,21 +157,8 @@ export default {
   // transition: border-width 200ms ease-in-out;
 }
 
-.forecast-icon-minus:hover {
+.show-forecast-btn:hover .forecast-icon-minus {
   border-width: 2px 0 0 0;
-}
-
-.forecast {
-  // border: 1px solid gray;
-  margin-top: 10px;
-  padding: 5px;
-  overflow: auto;
-  text-align: left;
-
-  table {
-    width: 100%;
-    margin-top: 10px;
-  }
 }
 
 .circle {
@@ -231,10 +168,19 @@ export default {
   position: absolute;
   top: -10px;
   right: -10px;
-  background: hotpink;
+  background: whitesmoke;
   width: 25px;
   height: 25px;
   border-radius: 100%;
+  border: 1px solid black;
   cursor: pointer;
+}
+
+.circle::after {
+  display: inline-block;
+  content: "\00d7";
+  font-size: 1.5em;
+  font-weight: bold;
+  color: gray;
 }
 </style>

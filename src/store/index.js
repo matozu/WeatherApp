@@ -11,14 +11,31 @@ export default createStore({
         }
     },
     actions: {
-        async fetchWeatherInfo({ commit }, place) {
+        async fetchWeather({ commit }, place) {
                 const data = await fetchData(place, 'weather')
                 if(typeof(data) !== 'undefined') {
                     commit('addPlace', data)
                 } else {
                     throw 'no place found with given name'
                 }
-        }
+        },
+
+        async fetchForecast({commit}, place) {
+            const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            const placeForecast = []
+            const data = await fetchData(place, "forecast");
+
+            if(typeof(data) !== 'undefined') {
+                for (let i = 7; i <= data.list.length; i += 8) {
+                    let dt = new Date(data.list[i].dt_txt);
+                    data.list[i].day = weekday[dt.getDay()];
+                    placeForecast.push(data.list[i]);
+                }
+                commit('addForecast', { placeName: place, data: placeForecast })
+            } else {
+                throw 'problem with fetching forecast'
+            }
+          }
     }, 
     mutations: {
         addPlace(state, placeWeather) {
@@ -26,8 +43,12 @@ export default createStore({
                 state.places.push(placeWeather)
             } else {
                 throw("place already exixts")
-                // console.log("place already exixts")
             }
+        },
+        addForecast(state, forecast ) {
+            state.places.map((p)=> p.name === forecast.placeName ? p.forecast = forecast.data : p)
+            // state.places = state.places.map( 
+            //     p=> p.name === forecast.placeName ? ({ ...p, forecast: forecast.data }) : p)
         },
         deletePlace(state, id) {
             state.places = state.places.filter( p => p.id != id )

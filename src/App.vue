@@ -27,14 +27,14 @@ export default {
     ...mapGetters(["getPlaces"]),
   },
   methods: {
-    ...mapActions(["fetchWeatherInfo"]),
+    ...mapActions(["fetchWeather"]),
     addPlace(e) {
       const inputField = document.getElementById("input-field");
       e.preventDefault();
       inputField.setCustomValidity("");
 
       if (this.place !== "") {
-        this.fetchWeatherInfo(this.place)
+        this.fetchWeather(this.place)
           .catch((e) => {
             inputField.setCustomValidity(e);
             inputField.reportValidity();
@@ -51,14 +51,18 @@ export default {
     },
   },
   created() {
-    this.fetchWeatherInfo("nin");
+    this.fetchWeather("nin");
   },
 };
 </script>
 
 <style lang="scss">
+body {
+  font-family: "Poppins", sans-serif;
+}
+
 .container {
-  width: 50%;
+  width: 100%;
   margin: auto;
   // border: 1px solid gray;
   text-align: center;

@@ -1,6 +1,7 @@
 <template>
   <div class="forecast">
-    5 day forecast
+    &nbsp 5 day forecast
+    <hr />
     <table>
       <tr>
         <th v-for="day in placeForecast" key="day.dt">{{ day.day }}</th>
@@ -35,15 +36,16 @@ export default {
 
 <style lang="scss" scoped>
 .forecast {
-  //   border: 1px solid gray;
+  width: 100%;
   margin-top: 10px;
-  padding: 5px;
-  overflow: auto;
   text-align: left;
 
   table {
-    width: 100%;
+    width: calc(100% + 15px);
+    margin-left: -5px;
     margin-top: 10px;
+    text-align: center;
+    line-height: 1.5em;
   }
 }
 </style>

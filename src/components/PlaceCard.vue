@@ -3,7 +3,8 @@
     <div class="circle" @click="deletePlace(placeWeather.id)"></div>
 
     <div class="header-left">
-      {{ placeWeather.name }}, {{ placeWeather.weather[0].description }}
+      <b>{{ placeWeather.name }}</b
+      >, {{ placeWeather.weather[0].description }}
     </div>
     <div class="header-right">
       <img :src="getIconUrl(placeWeather.weather[0].icon)" alt="" />
@@ -38,7 +39,6 @@
 
 <script>
 import Forecast from "./Forecast.vue";
-import fetchData from "../adapter";
 import { mapMutations, mapActions } from "vuex";
 import {
   calcTemp,
@@ -87,7 +87,7 @@ export default {
   border: 1px solid gray;
   border-radius: 5px;
   margin: 30px auto;
-  padding: 10px;
+  padding: 20px;
   background: gainsboro;
 }
 
@@ -103,7 +103,6 @@ export default {
 
 .weather-main {
   padding: 2px;
-  // border: 1px solid black;
   overflow: auto;
 }
 
@@ -111,33 +110,28 @@ export default {
   font-size: 4em;
   right: 5px;
   float: left;
-  // border: 1px solid black;
 }
 
 .main-right {
-  // border: 1px solid black;
   float: right;
   text-align: left;
 }
 
 .show-forecast-btn {
-  padding: 5px;
-  border: none;
   cursor: pointer;
   float: right;
-  height: 10px;
-  // border: 1px solid black;
+  height: 15px;
+  width: 15px;
+  margin-top: 10px;
 }
 
 .forecast-icon {
-  box-sizing: border-box;
   height: 10px;
   width: 10px;
   border-style: solid;
   border-color: black;
   border-width: 0px 1px 1px 0px;
   transform: rotate(45deg);
-  // transition: border-width 200ms ease-in-out;
 }
 
 // .forecast-icon:hover {
@@ -154,7 +148,6 @@ export default {
   border-color: black;
   border-width: 1px 0 0 0;
   margin-top: 5px;
-  // transition: border-width 200ms ease-in-out;
 }
 
 .show-forecast-btn:hover .forecast-icon-minus {
@@ -180,7 +173,10 @@ export default {
   display: inline-block;
   content: "\00d7";
   font-size: 1.5em;
-  font-weight: bold;
   color: gray;
+}
+
+.circle:hover::after {
+  font-weight: bold;
 }
 </style>

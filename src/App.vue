@@ -3,7 +3,7 @@
     <h1>Weather App</h1>
     <form>
       <input type="text" id="input-field" v-model="place" />
-      <button class="add-btn" @click="addPlace">Add place</button>
+      <button type="submit" class="add-btn" @click="addPlace">Add place</button>
     </form>
     <place-card v-for="place in getPlaces" :placeWeather="place"> </place-card>
   </div>
@@ -52,11 +52,27 @@ export default {
   },
   created() {
     this.fetchWeather("nin");
+    this.fetchWeather("knin");
+    this.fetchWeather("nina");
   },
 };
 </script>
 
 <style lang="scss">
+* {
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 body {
   font-family: "Poppins", sans-serif;
 }
@@ -64,7 +80,6 @@ body {
 .container {
   width: 100%;
   margin: auto;
-  // border: 1px solid gray;
   text-align: center;
 }
 

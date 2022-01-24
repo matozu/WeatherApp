@@ -53,7 +53,6 @@ export default {
   created() {
     this.fetchWeather("nin");
     this.fetchWeather("knin");
-    this.fetchWeather("nina");
   },
 };
 </script>

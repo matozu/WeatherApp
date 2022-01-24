@@ -40,7 +40,7 @@ export default createStore({
     mutations: {
         addPlace(state, placeWeather) {
             if((state.places.filter( p => p.id == placeWeather.id)).length == 0) {
-                state.places.push(placeWeather)
+                state.places.unshift(placeWeather)
             } else {
                 throw("place already exixts")
             }

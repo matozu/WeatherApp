@@ -52,7 +52,7 @@ export default {
   props: {
     placeWeather: {
       type: Object,
-      default: { type: "" },
+      default: { name: "" },
     },
   },
   components: {

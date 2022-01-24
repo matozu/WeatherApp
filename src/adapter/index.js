@@ -8,7 +8,6 @@ const fetchData = async (place, w_f) => {
         const data = await result.data
         return data
     } catch(e) {
-        // console.log("something going wrong")
     }
     
 
